@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Форма резюме</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        async function submitForm(event) {
+            event.preventDefault(); // Остановить стандартное поведение формы
+
+            const formData = new FormData(event.target);
+            const data = {};
+
+            // Преобразование данных формы в JSON
+            formData.forEach((value, key) => {
+                if (key === 'skills') {
+                    // Если это массив навыков, добавляем их в массив
+                    if (!data.skills) {
+                        data.skills = [];
+                    }
+                    data.skills.push(value);
+                } else {
+                    data[key] = value;
+                }
+            });
+
+            try {
+                const response = await fetch('http://localhost:8081/api/v1/resume/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                // if (response.ok) {
+                //     const result = await response.json();
+                //     console.log('Успех:', result);
+                //     alert('Резюме успешно отправлено!');
+                // } else {
+                //     console.error('Ошибка:', response.statusText);
+                //     alert('Произошла ошибка при отправке резюме.');
+                // }
+            } catch (error) {
+                console.error('Ошибка сети:', error);
+                alert('Произошла ошибка сети.' + error);
+            }
+        }
+    </script>
+</head>
+<body>
+<h2>Заполните резюме</h2>
+<form id="myForm" onsubmit="submitForm(event)">
+    <label for="fio">ФИО:</label>
+    <input type="text" id="fio" name="fullName" required>
+
+    <label for="prev_company">Предыдущая компания:</label>
+    <input type="text" id="prev_company" name="prevCompany" required>
+
+    <label for="position">Должность:</label>
+    <input type="text" id="position" name="position" required>
+
+    <label for="level">Уровень:</label>
+    <select id="level" name="level" required>
+        <option value="Junior">Junior</option>
+        <option value="Middle">Middle</option>
+        <option value="Senior">Senior</option>
+    </select>
+
+    <label for="salary">Зарплата:</label>
+    <input type="number" id="salary" name="salary" required>
+
+    <label>Навыки:</label>
+    <div class="checkbox-group">
+        <label><input type="checkbox" name="skills" value="1"> JavaScript</label>
+        <label><input type="checkbox" name="skills" value="2"> Python</label>
+        <label><input type="checkbox" name="skills" value="3"> Java</label>
+        <label><input type="checkbox" name="skills" value="4"> C#</label>
+        <label><input type="checkbox" name="skills" value="5"> Ruby</label>
+        <label><input type="checkbox" name="skills" value="6"> PHP</label>
+        <label><input type="checkbox" name="skills" value="7"> HTML/CSS</label>
+        <label><input type="checkbox" name="skills" value="8"> SQL</label>
+        <label><input type="checkbox" name="skills" value="9"> Swift</label>
+        <label><input type="checkbox" name="skills" value="10"> Go</label>
+        <label><input type="checkbox" name="skills" value="11"> TypeScript</label>
+        <label><input type="checkbox" name="skills" value="12"> Kotlin</label>
+        <label><input type="checkbox" name="skills" value="13"> Rust</label>
+        <label><input type="checkbox" name="skills" value="14"> Dart</label>
+        <label><input type="checkbox" name="skills" value="15"> Scala</label>
+    </div>
+
+    <label for="description">Описание:</label>
+    <textarea id="description" name="description" rows="4"></textarea>
+
+    <button type="submit">Отправить резюме</button>
+</form>
+
+</body>
+</html>
