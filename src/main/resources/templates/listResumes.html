@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Просмотр резюме и отправка решений</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        select, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .loading {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Список резюме по категориям</h2>
+
+<label for="category">Выберите категорию:</label>
+<select id="category" onchange="fetchResumes()">
+    <option value="">-- Выберите категорию --</option>
+    <option value="FirstPriority">First Priority</option>
+    <option value="SecondPriority">Second Priority</option>
+    <option value="LastPriority">LastPriority</option>
+    <option value="Reject">Reject</option>
+</select>
+
+<div id="content" class="loading">Загрузка данных...</div>
+
+<script type="text/javascript">
+    async function fetchResumes() {
+        const category = document.getElementById('category').value;
+        const url = category ? `http://localhost:8081/api/v1/resume/${category}` : 'http://localhost:8081/api/v1/resume/all';
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Сетевая ошибка: ' + response.statusText);
+            }
+            const resumes = await response.json();
+            displayResumes(resumes);
+        } catch (error) {
+            document.getElementById('content').innerHTML = `<div class="error">Ошибка: ${error.message}</div>`;
+        }
+    }
+
+    function displayResumes(resumes) {
+        const content = document.getElementById('content');
+        content.innerHTML = ''; // Очистить предыдущее содержимое
+
+        // Создание таблицы
+        const table = document.createElement('table');
+        const headerRow = document.createElement('tr');
+        const headers = ['ID', 'ФИО', 'Предыдущая компания', 'Должность', 'Уровень', 'Зарплата', 'Описание', 'Категория', 'Решение', 'Навыки', 'Действие'];
+
+        headers.forEach(headerText => {
+            const header = document.createElement('th');
+            header.textContent = headerText;
+            headerRow.appendChild(header);
+        });
+        table.appendChild(headerRow);
+
+        // Заполнение таблицы данными
+        resumes.forEach(resume => {
+            const row = document.createElement('tr');
+            const skills = resume.skills.map(skill => skill.name).join(', '); // Получаем навыки в виде строки
+
+            // Создание выпадающего списка для решения
+            const selectElement = document.createElement('select');
+            const options = ['Accept', 'SendTestTask', 'AdditionalInterview', 'Reject'];
+
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                selectElement.appendChild(opt);
+            });
+
+            // Кнопка для отправки решения
+            const button = document.createElement('button');
+            button.textContent = 'Отправить';
+            button.onclick = () => sendDecision(resume.id, selectElement.value);
+
+            row.innerHTML = `
+                <td>${resume.id}</td>
+                <td>${resume.fullName}</td>
+                <td>${resume.prevCompany}</td>
+                <td>${resume.position}</td>
+                <td>${resume.level}</td>
+                <td>${resume.salary}</td>
+                <td>${resume.description}</td>
+                <td>${resume.category || 'Не указана'}</td>
+                <td>${resume.decide || 'Не указано'}</td>
+                <td>${skills || 'Нет навыков'}</td>
+            `;
+            row.appendChild(selectElement);
+            row.appendChild(button);
+            table.appendChild(row);
+        });
+
+        content.appendChild(table);
+    }
+
+    async function sendDecision(resumeId, decision) {
+        try {
+            const response = await fetch(`http://localhost:8081/api/v1/resume/decide`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: resumeId, decide: decision }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при отправке решения: ' + response.statusText);
+            }
+
+            const result = await response.json();
+            alert(`Решение для резюме ID ${resumeId} отправлено: ${decision}`);
+            console.log('Ответ сервера:', result);
+        } catch (error) {
+            console.error('Ошибка:', error);
+            alert(`Ошибка: ${error.message}`);
+        }
+    }
+</script>
+
+</body>
+</html>

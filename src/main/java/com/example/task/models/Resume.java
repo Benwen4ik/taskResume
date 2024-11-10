@@ -4,6 +4,7 @@ import com.example.task.models.enums.Category;
 import com.example.task.models.enums.Decide;
 import com.example.task.models.enums.LevelSkills;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,22 +24,32 @@ public class Resume {
     private int id;
 
     @Column(name = "fio")
+    @NotNull
+    @Size(min = 5, max = 80, message = "ФИО должно быть длиной от 5 до 80")
     private String fullName;
 
     @Column(name = "prev_company")
+    @NotNull
+    @Size(min = 2, max = 20, message = "Название предыдущей компании должно быть длиной от 2 до 20")
     private String prevCompany;
 
     @Column
+    @NotNull
+    @Size(min = 2, max = 20, message = "Должность должна быть длиной от 2 до 20")
     private String position;
 
     @Column
     @Enumerated(EnumType.STRING)
+    @NotNull
     private LevelSkills level;
 
     @Column
+    @NotEmpty
+    @Min(0)
     private int salary;
 
     @Column
+    @Size(max = 100, message = "Описание должно быть максимум 100 символов")
     private String description;
 
     @Column
