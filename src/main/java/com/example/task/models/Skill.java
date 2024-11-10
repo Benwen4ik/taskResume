@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Класс-сущность для таблицы skills
+ */
 @Entity
 @Table(name = "skills")
 @Data
@@ -25,6 +28,5 @@ public class Skill {
 
     @ManyToMany
     private List<Resume> resumeList ;
-
 
 }

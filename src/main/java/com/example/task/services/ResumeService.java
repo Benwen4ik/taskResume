@@ -34,6 +34,11 @@ public class ResumeService {
         this.resumeRepository = resumeRepository;
     }
 
+    /**
+     * Парсит ResumeDTO в Resume, сохраняет его в бд и вызывает функцию для получения категории
+     * @param resumeDTO валидированный ResumeDTO
+     * @return id добавленной записи
+     */
     public int save(ResumeDTO resumeDTO) {
         Resume resume = resumeRepository.save(parseByResume(resumeDTO));
         getCategory(resume);
@@ -41,23 +46,46 @@ public class ResumeService {
         return resume.getId();
     }
 
+    /**
+     * Выдает список Resume по категории
+     * @param category категория резюме
+     * @return список резюме
+     */
     public List<Resume> getByCategory(Category category) {
         return resumeRepository.findByCategory(category);
     }
 
+    /**
+     * Выдает список Resume по id записи
+     * @param id id записи в таблице resumes
+     * @return Optional для Resume
+     */
     public Optional<Resume> getById(int id) {
         return resumeRepository.findById(id);
     }
 
+    /**
+     * Возвращает все записи Resume из таблицы resumes
+     * @return список из List
+     */
     public List<Resume> getAll() {
         return resumeRepository.findAllByOrderByCategory();
     }
 
+    /**
+     * Изменяет поле "decide" для Resume
+     * @param id id записи Resume
+     * @param decide новое решение
+     */
     public void changeDecide(int id, Decide decide) {
         resumeRepository.findById(id).ifPresent(resume -> resume.setDecide(decide));
-        log.info("Изменение решения для резюме id={}", id);
+        log.info("Изменение решения для резюме с id={}", id);
     }
 
+    /**
+     * Изменяет поле "category" для Resume, согласно условию
+     * @param resume изменяемое Resume
+     */
     public void getCategory(Resume resume) {
         Query queryWorkers = entityManager.createNativeQuery("SELECT * FROM bad_workers b WHERE b.name = :name", Map.class);
         Query queryCompany = entityManager.createNativeQuery("SELECT * FROM bad_company b WHERE b.name = :name", Map.class);
@@ -77,15 +105,25 @@ public class ResumeService {
                 && resume.getSkills().size() > 6) {
             resume.setCategory(Category.FirstPriority);
         }
-        log.info("Категоризация резюме с id={}", resume.getId());
+        log.info("Добавлена категория для резюме с id={}", resume.getId());
     }
 
+    /**
+     * Преобразовывает ResumeDTO в Resume
+     * @param dto ResumeDTO
+     * @return Resume
+     */
     public Resume parseByResume(ResumeDTO dto) {
         return Resume.builder().fullName(dto.getFullName()).description(dto.getDescription())
                 .level(dto.getLevel()).position(dto.getPosition()).prevCompany(dto.getPrevCompany())
                 .salary(dto.getSalary()).skills(parseByListSkills(dto.getSkills())).build();
     }
 
+    /**
+     * Преобразовавает List&lt;String&gt; в List&lt;Skill&gt;
+     * @param list List&lt;String&gt;
+     * @return List&lt;Skills&gt;
+     */
     public List<Skill> parseByListSkills(List<Integer> list) {
         return list.stream().map(a -> Skill.builder().id(a).build()).toList();
     }

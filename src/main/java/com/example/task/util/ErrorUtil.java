@@ -11,6 +11,11 @@ import java.util.List;
 @Slf4j
 public class ErrorUtil {
 
+    /**
+     * Обрабатывает ошибки валидации
+     * @param bindingResult объект, который содержит результаты валидации данных
+     * @throws Exception
+     */
     public static void returnErrorsToClient(BindingResult bindingResult) throws Exception {
         StringBuilder errorMsg = new StringBuilder();
 

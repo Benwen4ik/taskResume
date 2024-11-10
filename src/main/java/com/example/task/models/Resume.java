@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Класс-сущность для таблицы resumes
+ */
 @Entity
 @Table(name = "resumes")
 @Data

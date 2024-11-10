@@ -11,6 +11,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Класс DTO для Resume
+ */
 @Data
 public class ResumeDTO {
 

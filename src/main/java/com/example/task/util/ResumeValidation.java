@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+/**
+ * Класс для валидации Resume
+ */
 @Component
 public class ResumeValidation implements Validator {
 
@@ -23,6 +26,11 @@ public class ResumeValidation implements Validator {
         return Resume.class.equals(clazz);
     }
 
+    /**
+     * Проверяет на уникальность по ФИО(fullName)
+     * @param target проверяемый объект Resume
+     * @param errors объект, который используется для регистрации ошибок валидации
+     */
     @Override
     public void validate(Object target, Errors errors) {
         Resume resume = (Resume) target;
