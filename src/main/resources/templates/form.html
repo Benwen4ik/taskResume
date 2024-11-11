@@ -45,6 +45,18 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+
+        .response-message {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+
+        .error {
+            color: red;
+        }
     </style>
     <script type="text/javascript">
         async function submitForm(event) {
@@ -75,42 +87,51 @@
                     body: JSON.stringify(data),
                 });
 
-                // if (response.ok) {
-                //     const result = await response.json();
-                //     console.log('Успех:', result);
-                //     alert('Резюме успешно отправлено!');
-                // } else {
-                //     console.error('Ошибка:', response.statusText);
-                //     alert('Произошла ошибка при отправке резюме.');
-                // }
+                if (response.ok) {
+                    const result = await response.json();
+                    displayResponseMessage(result.message); // Показываем сообщение от сервера
+                } else {
+                    const errorResponse = await response.json();
+                    displayResponseMessage(`Ошибка: ${errorResponse.message}`, true); // Показываем сообщение об ошибке
+                }
             } catch (error) {
                 console.error('Ошибка сети:', error);
-                alert('Произошла ошибка сети.' + error);
+                displayResponseMessage('Произошла ошибка сети.' + error, true);
             }
+        }
+
+        function displayResponseMessage(message, isError = false) {
+            const responseDiv = document.getElementById('response-message');
+            responseDiv.className = 'response-message' + (isError ? ' error' : '');
+            responseDiv.innerText = message;
+            responseDiv.style.display = 'block'; // Показываем сообщение
         }
     </script>
 </head>
 <body>
+<!--<a href="view/resumes">Посмотреть список резюме</a>-->
 <h2>Заполните резюме</h2>
+<div id="response-message" class="response-message" style="display: none;"></div> <!-- Блок для сообщений -->
+
 <form id="myForm" onsubmit="submitForm(event)">
     <label for="fio">ФИО:</label>
     <input type="text" id="fio" name="fullName">
 
     <label for="prev_company">Предыдущая компания:</label>
-    <input type="text" id="prev_company" name="prevCompany" required>
+    <input type="text" id="prev_company" name="prevCompany">
 
     <label for="position">Должность:</label>
-    <input type="text" id="position" name="position" required>
+    <input type="text" id="position" name="position">
 
     <label for="level">Уровень:</label>
-    <select id="level" name="level" required>
+    <select id="level" name="level">
         <option value="Junior">Junior</option>
         <option value="Middle">Middle</option>
         <option value="Senior">Senior</option>
     </select>
 
     <label for="salary">Зарплата:</label>
-    <input type="number" id="salary" name="salary" required>
+    <input type="number" id="salary" name="salary">
 
     <label>Навыки:</label>
     <div class="checkbox-group">

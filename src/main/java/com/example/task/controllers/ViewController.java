@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Класс для отображения фронт-части
+ * Контроллер для отображения фронт-части
  */
 @Controller
 @RequestMapping("/view")

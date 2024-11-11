@@ -32,7 +32,6 @@ public class Resume {
     private String fullName;
 
     @Column(name = "prev_company")
-    @NotNull
     @Size(min = 2, max = 20, message = "Название предыдущей компании должно быть длиной от 2 до 20")
     private String prevCompany;
 
@@ -47,8 +46,8 @@ public class Resume {
     private LevelSkills level;
 
     @Column
-    @NotEmpty
-    @Min(0)
+    @NotNull
+    @Min(value = 0, message = "Зарплата не может быть меньше 0")
     private int salary;
 
     @Column
