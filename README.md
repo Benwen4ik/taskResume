@@ -5,17 +5,22 @@
   
   ``` git clone https://github.com/Benwen4ik/taskResume.git ```
   
-  2. Изменение конфигурационных данных в application.properties
+  2. Запуск файла docker.yml, для запуска докера с бд
   
-  ``` По умолчанию port = 8081 ```
-  ``` username=postgres ```
-  ``` password=postgres ```
+   либо
   
-  3. Создание бд в PostgreSQL
+      1) Изменение конфигурационных данных в application.properties
   
-  ```   По умолчанию название бд в application.propertes "resumeTaskDB" ```
+     ``` По умолчанию port = 8081 ```
+     ``` username=postgres ```
+     ``` password=postgres ```
   
-  4. Запуск команд в init.sql для создания и инициализации таблиц бд
+     2) Создание бд в PostgreSQL
+  
+     ```   По умолчанию название бд в application.propertes "resume_db" ```
+  
+     3) Запуск команд в init.sql для создания и инициализации таблиц бд
+     
 ## Документация
 Форма для создания резюме находится по адресу http://localhost:8081/view/form 
 
